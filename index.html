@@ -1,0 +1,2669 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reflact Engine – Praktikanten-Schulung (5 Tage)</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730a3;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #1e1e2e;
+            --code-text: #cdd6f4;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+            padding-bottom: 2rem;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-header p {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .nav-section {
+            padding: 1rem 0;
+        }
+
+        .nav-day {
+            padding: 0.5rem 1.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.6;
+            cursor: pointer;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 0.6rem 1.5rem 0.6rem 2rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .nav-item .nav-icon {
+            margin-right: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-top: 0.3rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem 3rem;
+            max-width: 900px;
+        }
+
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 200;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--primary-dark);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* Day Badge */
+        .day-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .card-icon.blue { background: #dbeafe; }
+        .card-icon.green { background: #d1fae5; }
+        .card-icon.purple { background: #ede9fe; }
+        .card-icon.orange { background: #ffedd5; }
+        .card-icon.red { background: #fee2e2; }
+        .card-icon.cyan { background: #cffafe; }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        /* Info Boxes */
+        .info-box {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.tip {
+            background: #f0fdf4;
+            border-color: var(--success);
+        }
+
+        .info-box.warning {
+            background: #fffbeb;
+            border-color: var(--warning);
+        }
+
+        .info-box.info {
+            background: #eff6ff;
+            border-color: var(--primary-light);
+        }
+
+        .info-box.danger {
+            background: #fef2f2;
+            border-color: var(--danger);
+        }
+
+        .info-box-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-box.tip .info-box-title { color: #059669; }
+        .info-box.warning .info-box-title { color: #d97706; }
+        .info-box.info .info-box-title { color: var(--primary); }
+        .info-box.danger .info-box-title { color: var(--danger); }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--text-muted);
+        }
+
+        tr:hover td {
+            background: #f8fafc;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.25rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        code {
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+        }
+
+        :not(pre) > code {
+            background: #f1f5f9;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.875em;
+            color: var(--primary-dark);
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 0.75rem 0;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Exercise Box */
+        .exercise {
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border: 2px solid var(--primary-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exercise-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            font-size: 1.05rem;
+        }
+
+        .exercise ol, .exercise ul {
+            margin-top: 0.5rem;
+        }
+
+        /* Quiz */
+        .quiz {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        .quiz-option {
+            display: block;
+            padding: 0.75rem 1rem;
+            margin: 0.4rem 0;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--primary-light);
+            background: #f8fafc;
+        }
+
+        .quiz-option.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: #d1fae5;
+        }
+
+        .quiz-option.wrong {
+            border-color: var(--danger);
+            background: #fee2e2;
+        }
+
+        .quiz-feedback {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.correct { background: #d1fae5; color: #065f46; }
+        .quiz-feedback.wrong { background: #fee2e2; color: #991b1b; }
+
+        .quiz-btn {
+            margin-top: 1rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .quiz-btn:hover { background: var(--primary-dark); }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            text-decoration: none;
+        }
+
+        .nav-btn.prev {
+            background: white;
+            border: 2px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .nav-btn.prev:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .nav-btn.next {
+            background: var(--primary);
+            border: 2px solid var(--primary);
+            color: white;
+        }
+
+        .nav-btn.next:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Diagram */
+        .diagram {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .diagram svg {
+            max-width: 100%;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 1rem;
+        }
+
+        .flow-box {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .flow-arrow {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        /* Accordion */
+        .accordion {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 1rem 1.25rem;
+            background: #f8fafc;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .accordion-header:hover {
+            background: #f1f5f9;
+        }
+
+        .accordion-header::after {
+            content: '▸';
+            transition: transform 0.3s;
+        }
+
+        .accordion-header.open::after {
+            transform: rotate(90deg);
+        }
+
+        .accordion-body {
+            padding: 0 1.25rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-body.open {
+            max-height: 2000px;
+            padding: 1rem 1.25rem;
+        }
+
+        /* Scenario Cards */
+        .scenario {
+            background: #fefce8;
+            border: 1px solid #fde047;
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .scenario-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #ca8a04;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar, .mobile-toggle, .nav-buttons { display: none; }
+            .main-content { margin-left: 0; max-width: 100%; }
+            .section { display: block !important; page-break-before: always; }
+        }
+
+        /* Skill type visual */
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .skill-card {
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .skill-card .icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-card .name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .skill-card .desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* Highlight term */
+        .term {
+            background: linear-gradient(120deg, #a78bfa33, #818cf833);
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.6rem;
+            top: 0.5rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .timeline-item .time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h2>🤖 reflact Engine</h2>
+        <p>Praktikanten-Schulung</p>
+    </div>
+
+    <nav class="nav-section">
+        <!-- Tag 1 -->
+        <div class="nav-day" onclick="navigateTo('welcome')">📅 Einführung</div>
+        <a class="nav-item" data-section="welcome"><span class="nav-icon">👋</span> Willkommen</a>
+        <a class="nav-item" data-section="overview"><span class="nav-icon">🗺️</span> Wochenüberblick</a>
+
+        <div class="nav-day" onclick="navigateTo('day1-intro')">📅 Tag 1 – Grundlagen</div>
+        <a class="nav-item" data-section="day1-intro"><span class="nav-icon">💡</span> Was ist die reflact Engine?</a>
+        <a class="nav-item" data-section="day1-llm"><span class="nav-icon">🧠</span> Wie funktionieren LLMs?</a>
+        <a class="nav-item" data-section="day1-rag"><span class="nav-icon">📚</span> RAG verstehen</a>
+        <a class="nav-item" data-section="day1-exercise"><span class="nav-icon">✏️</span> Übung: Erste Erkundung</a>
+
+        <div class="nav-day" onclick="navigateTo('day2-admin')">📅 Tag 2 – Admin-Bereich</div>
+        <a class="nav-item" data-section="day2-admin"><span class="nav-icon">⚙️</span> Admin-Oberfläche</a>
+        <a class="nav-item" data-section="day2-bots"><span class="nav-icon">🤖</span> Bots erstellen</a>
+        <a class="nav-item" data-section="day2-config"><span class="nav-icon">🔧</span> Bot konfigurieren</a>
+        <a class="nav-item" data-section="day2-exercise"><span class="nav-icon">✏️</span> Übung: Ersten Bot bauen</a>
+
+        <div class="nav-day" onclick="navigateTo('day3-skills')">📅 Tag 3 – Skills & Wissen</div>
+        <a class="nav-item" data-section="day3-skills"><span class="nav-icon">🛠️</span> Skill-System</a>
+        <a class="nav-item" data-section="day3-types"><span class="nav-icon">📋</span> Skill-Typen im Detail</a>
+        <a class="nav-item" data-section="day3-rag-praxis"><span class="nav-icon">📖</span> RAG in der Praxis</a>
+        <a class="nav-item" data-section="day3-exercise"><span class="nav-icon">✏️</span> Übung: Skills anlegen</a>
+
+        <div class="nav-day" onclick="navigateTo('day4-advanced')">📅 Tag 4 – Erweiterte Features</div>
+        <a class="nav-item" data-section="day4-advanced"><span class="nav-icon">🎭</span> Bot-Typen</a>
+        <a class="nav-item" data-section="day4-insights"><span class="nav-icon">📊</span> Insights & Monitoring</a>
+        <a class="nav-item" data-section="day4-embed"><span class="nav-icon">🌐</span> Einbetten & Export</a>
+        <a class="nav-item" data-section="day4-exercise"><span class="nav-icon">✏️</span> Übung: Analyse & Export</a>
+
+        <div class="nav-day" onclick="navigateTo('day5-support')">📅 Tag 5 – Support-Praxis</div>
+        <a class="nav-item" data-section="day5-support"><span class="nav-icon">🎯</span> Deine Support-Rolle</a>
+        <a class="nav-item" data-section="day5-debug"><span class="nav-icon">🔍</span> Debug-Log lesen</a>
+        <a class="nav-item" data-section="day5-troubleshoot"><span class="nav-icon">🛡️</span> Troubleshooting</a>
+        <a class="nav-item" data-section="day5-exercise"><span class="nav-icon">✏️</span> Übung: Support-Szenarien</a>
+        <a class="nav-item" data-section="day5-final"><span class="nav-icon">🎓</span> Abschluss & Ausblick</a>
+    </nav>
+
+    <div class="progress-container">
+        <div class="progress-label">Fortschritt</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">0 / 17 Abschnitte</div>
+    </div>
+</aside>
+
+<main class="main-content">
+
+    <!-- WILLKOMMEN -->
+    <div class="section active" id="section-welcome">
+        <span class="day-badge">Start</span>
+        <h1>Willkommen zur reflact Engine Schulung!</h1>
+        <p class="subtitle">In den nächsten 5 Tagen lernst du unsere KI-Bot-Plattform von Grund auf kennen – Schritt für Schritt, mit praktischen Übungen.</p>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">🎯</div>
+                <div class="card-title">Dein Ziel</div>
+            </div>
+            <p>Nach dieser Woche kannst du:</p>
+            <ul>
+                <li>Die reflact Engine in ihren Grundzügen erklären</li>
+                <li>Benutzern bei häufigen Problemen eigenständig helfen</li>
+                <li>Bots erstellen, konfigurieren und testen</li>
+                <li>Den Debug-Log lesen und Fehler eingrenzen</li>
+                <li>Wünsche & Probleme für das Entwickler-Team dokumentieren</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">💼</div>
+                <div class="card-title">Deine zukünftige Rolle</div>
+            </div>
+            <p>Du wirst Teil des <strong>Support-Prozesses</strong>. Das bedeutet:</p>
+            <ul>
+                <li><strong>Nutzer unterstützen</strong> – Du beantwortest Fragen und hilfst bei Problemen</li>
+                <li><strong>Entwickler entlasten</strong> – Du fängst einfache Anfragen ab, damit das Team entwickeln kann</li>
+                <li><strong>Feedback sammeln</strong> – Du erkennst Wünsche und dokumentierst sie als Backlog-Einträge</li>
+                <li><strong>Brücke sein</strong> – Zwischen Nutzern und dem Entwicklungsteam</li>
+            </ul>
+        </div>
+
+        <div class="info-box tip">
+            <div class="info-box-title">💡 Tipp</div>
+            <p>Mach dir während der Schulung Notizen! Alles, was du dir merkst, hilft dir später im Support-Alltag.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <span></span>
+            <button class="nav-btn next" onclick="nextSection()">Weiter zum Wochenüberblick →</button>
+        </div>
+    </div>
+
+    <!-- WOCHENÜBERBLICK -->
+    <div class="section" id="section-overview">
+        <span class="day-badge">Überblick</span>
+        <h1>Deine Woche im Überblick</h1>
+        <p class="subtitle">Jeder Tag hat einen thematischen Schwerpunkt mit Theorie und praktischen Übungen.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th>Thema</th>
+                    <th>Schwerpunkt</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Montag</strong></td>
+                    <td>🧠 Grundlagen</td>
+                    <td>Was ist die Engine? LLMs & RAG verstehen</td>
+                </tr>
+                <tr>
+                    <td><strong>Dienstag</strong></td>
+                    <td>⚙️ Admin-Bereich</td>
+                    <td>Projekte, Bots erstellen & konfigurieren</td>
+                </tr>
+                <tr>
+                    <td><strong>Mittwoch</strong></td>
+                    <td>🛠️ Skills & Wissen</td>
+                    <td>Skill-Typen, RAG-Praxis, Wissensbasen</td>
+                </tr>
+                <tr>
+                    <td><strong>Donnerstag</strong></td>
+                    <td>🎭 Erweiterte Features</td>
+                    <td>Bot-Typen, Insights, Embedding</td>
+                </tr>
+                <tr>
+                    <td><strong>Freitag</strong></td>
+                    <td>🎯 Support-Praxis</td>
+                    <td>Debug-Logs, Troubleshooting, reale Szenarien</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="info-box info">
+            <div class="info-box-title">ℹ️ Hinweis</div>
+            <p>Am Montag erhältst du zusätzlich eine Scrum-Einführung von deinem Team. Diese Schulung hier konzentriert sich auf die Software selbst.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Tag 1 starten →</button>
+        </div>
+    </div>
+
+    <!-- TAG 1: WAS IST DIE REFLACT ENGINE -->
+    <div class="section" id="section-day1-intro">
+        <span class="day-badge">Tag 1 – Montag</span>
+        <h1>Was ist die reflact Engine?</h1>
+        <p class="subtitle">Ein Überblick über die Plattform, ihre Bestandteile und wofür sie eingesetzt wird.</p>
+
+        <h2>Die reflact Engine auf einen Blick</h2>
+        <p>Die <span class="term">reflact Engine</span> ist eine Plattform zur Erstellung und Verwaltung von KI-gesteuerten Bots. Nutzer können ohne Programmierkenntnisse intelligente Chatbots, Voice-Bots und Avatar-Bots erstellen.</p>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon purple">🏗️</div>
+                <div class="card-title">Die drei Hauptbereiche</div>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Bereich</th><th>Was es ist</th><th>Wer es nutzt</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Admin</strong> (bot-admin)</td>
+                        <td>Bot-Verwaltung & Konfiguration</td>
+                        <td>Admins, Bot-Designer</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bot</strong> (bot)</td>
+                        <td>Chat-Oberfläche für Gespräche</td>
+                        <td>Endnutzer, Lernende</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RAG-Admin</strong></td>
+                        <td>Wissensdatenbank-Verwaltung</td>
+                        <td>Dokumenten-Manager</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Wofür wird die Engine eingesetzt?</h2>
+        <div class="card">
+            <ul>
+                <li><strong>Unternehmensinterne Support-Bots</strong> – FAQ-Assistenten, IT-Helpdesk</li>
+                <li><strong>E-Learning</strong> – Interaktive Lernassistenten mit Quiz & Scoring</li>
+                <li><strong>Onboarding</strong> – Neue Mitarbeiter mit einem Bot einarbeiten</li>
+                <li><strong>Kundenkommunikation</strong> – Chat-Widgets auf Websites</li>
+                <li><strong>Trainings & Simulationen</strong> – Rollenspiele, Gesprächsübungen</li>
+            </ul>
+        </div>
+
+        <h2>Die Architektur (vereinfacht)</h2>
+        <div class="diagram">
+            <div class="flow-diagram">
+                <div class="flow-box" style="background:#dbeafe;color:#1e40af;">👤 Endnutzer</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box" style="background:#e0e7ff;color:#3730a3;">💬 Bot-Frontend</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box" style="background:#ede9fe;color:#5b21b6;">⚡ Server (API)</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-box" style="background:#fae8ff;color:#86198f;">🧠 LLM (GPT-4o)</div>
+            </div>
+            <p style="margin-top:1rem;font-size:0.85rem;color:var(--text-muted);">
+                ↕ Skills, Wissensdatenbank, Konfiguration fließen über den Server ins LLM
+            </p>
+        </div>
+
+        <h2>Kernkonzepte – Dein erstes Vokabular</h2>
+        <table>
+            <thead><tr><th>Begriff</th><th>Bedeutung</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Projekt</strong></td><td>Ordner für zusammengehörige Bots (wie ein Arbeitsbereich)</td></tr>
+                <tr><td><strong>Bot</strong></td><td>Ein einzelner KI-Assistent mit eigenem Verhalten</td></tr>
+                <tr><td><strong>Skill</strong></td><td>Ein Werkzeug/Wissensquelle, die dem Bot zur Verfügung steht</td></tr>
+                <tr><td><strong>Systemprompt</strong></td><td>Die „Persönlichkeit" und Regeln des Bots</td></tr>
+                <tr><td><strong>LLM</strong></td><td>Large Language Model – das KI-Sprachmodell dahinter</td></tr>
+                <tr><td><strong>RAG</strong></td><td>Retrieval-Augmented Generation – Wissen aus Dokumenten nutzen</td></tr>
+                <tr><td><strong>Token</strong></td><td>Texteinheiten, die das LLM verarbeitet (ca. ¾ eines Wortes)</td></tr>
+                <tr><td><strong>Stage</strong></td><td>Ein Gesprächsabschnitt mit eigener Konfiguration</td></tr>
+            </tbody>
+        </table>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: LLMs verstehen →</button>
+        </div>
+    </div>
+
+    <!-- TAG 1: LLMs -->
+    <div class="section" id="section-day1-llm">
+        <span class="day-badge">Tag 1 – Montag</span>
+        <h1>Wie funktionieren LLMs?</h1>
+        <p class="subtitle">Grundverständnis der Technologie hinter den Bots – wichtig für den Support!</p>
+
+        <h2>Was ist ein Large Language Model?</h2>
+        <p>Ein LLM ist ein KI-Modell, das auf riesigen Textmengen trainiert wurde. Es funktioniert im Kern so:</p>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon cyan">🎲</div>
+                <div class="card-title">Das Wahrscheinlichkeitsprinzip</div>
+            </div>
+            <p>Ein LLM berechnet für jedes nächste Wort die <strong>Wahrscheinlichkeit</strong>, welches Wort als nächstes kommen sollte. Es "versteht" nicht wirklich – es ist extrem gut im Muster-Erkennen.</p>
+            <pre><code>Eingabe:  "Die Hauptstadt von Deutschland ist ___"
+LLM denkt: Berlin (94%) | Bonn (3%) | München (1%) | ...
+Ausgabe:  "Berlin"</code></pre>
+        </div>
+
+        <h2>Drei wichtige Eigenschaften für den Support</h2>
+
+        <div class="info-box warning">
+            <div class="info-box-title">⚠️ 1. Halluzinationen</div>
+            <p>LLMs können <strong>Fakten erfinden</strong>, die überzeugend klingen aber falsch sind. Das ist kein Bug – es liegt in der Natur der Technologie. Deshalb nutzen wir RAG (kommt gleich).</p>
+        </div>
+
+        <div class="info-box info">
+            <div class="info-box-title">ℹ️ 2. Kontextfenster</div>
+            <p>LLMs können nur eine begrenzte Textmenge gleichzeitig verarbeiten (das „Kontextfenster"). Bei sehr langen Gesprächen können ältere Nachrichten „vergessen" werden.</p>
+        </div>
+
+        <div class="info-box tip">
+            <div class="info-box-title">💡 3. Determinismus</div>
+            <p>Die gleiche Frage kann unterschiedliche Antworten liefern. LLMs sind <strong>nicht deterministisch</strong> – das ist normal und kein Fehler.</p>
+        </div>
+
+        <h2>Was bedeutet das für den Support?</h2>
+        <div class="card">
+            <ul>
+                <li>Wenn ein Nutzer sagt: „Der Bot erzählt Unsinn" → Möglicherweise Halluzination. Lösung: Bessere Skills/Wissensquellen bereitstellen.</li>
+                <li>Wenn ein Nutzer sagt: „Der Bot hat vergessen, was ich gesagt habe" → Kontextfenster-Limit. Das ist eine technische Grenze.</li>
+                <li>Wenn ein Nutzer sagt: „Gestern hat der Bot anders geantwortet" → Normal! LLMs sind probabilistisch.</li>
+            </ul>
+        </div>
+
+        <div class="quiz" id="quiz-llm">
+            <div class="quiz-question">🧪 Wissens-Check: Ein Nutzer beschwert sich, der Bot gebe erfundene Quellenangaben an. Was ist die wahrscheinlichste Ursache?</div>
+            <div class="quiz-option" data-correct="true" onclick="selectQuizOption(this)">Das LLM halluziniert – es erfindet plausibel klingende Quellen</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Der Server ist überlastet</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Der Bot wurde gehackt</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Das ist ein Browser-Fehler</div>
+            <button class="quiz-btn" onclick="checkQuiz('quiz-llm')">Antwort prüfen</button>
+            <div class="quiz-feedback" id="quiz-llm-feedback"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: RAG verstehen →</button>
+        </div>
+    </div>
+
+    <!-- TAG 1: RAG -->
+    <div class="section" id="section-day1-rag">
+        <span class="day-badge">Tag 1 – Montag</span>
+        <h1>RAG – Retrieval-Augmented Generation</h1>
+        <p class="subtitle">Wie wir LLMs mit echtem Wissen versorgen und Halluzinationen reduzieren.</p>
+
+        <h2>Das Problem ohne RAG</h2>
+        <p>Ein LLM weiß nur, was in seinen Trainingsdaten steht. Es kennt weder deine Firmen-FAQ noch aktuelle Produktinfos. Wenn man es trotzdem fragt, <strong>erfindet es eine Antwort</strong>.</p>
+
+        <h2>Die Lösung: RAG</h2>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">📚</div>
+                <div class="card-title">So funktioniert RAG</div>
+            </div>
+            <div class="diagram">
+                <div class="flow-diagram" style="flex-direction: column; gap: 1rem;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                        <div class="flow-box" style="background:#dbeafe;color:#1e40af;">1️⃣ Nutzer stellt Frage</div>
+                    </div>
+                    <div style="font-size:1.2rem;color:var(--text-muted);">↓</div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                        <div class="flow-box" style="background:#d1fae5;color:#065f46;">2️⃣ System sucht relevante Dokumente</div>
+                    </div>
+                    <div style="font-size:1.2rem;color:var(--text-muted);">↓</div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                        <div class="flow-box" style="background:#ede9fe;color:#5b21b6;">3️⃣ Gefundene Textstellen + Frage → ans LLM</div>
+                    </div>
+                    <div style="font-size:1.2rem;color:var(--text-muted);">↓</div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                        <div class="flow-box" style="background:#fae8ff;color:#86198f;">4️⃣ LLM antwortet basierend auf echtem Wissen</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Analogie: RAG ist wie ein offenes Buch in einer Prüfung</h2>
+        <div class="info-box tip">
+            <div class="info-box-title">💡 Vereinfacht</div>
+            <p>Stell dir vor, du schreibst eine Prüfung. <strong>Ohne RAG</strong> musst du alles aus dem Gedächtnis beantworten (und erfindest vielleicht was). <strong>Mit RAG</strong> darfst du in deinem Ordner nachschlagen – du gibst korrekte, belegbare Antworten.</p>
+        </div>
+
+        <h2>Warum ist das für den Support wichtig?</h2>
+        <div class="card">
+            <ul>
+                <li><strong>„Der Bot weiß das nicht"</strong> → Prüfen: Ist das Wissen als Skill hinterlegt?</li>
+                <li><strong>„Die Antwort ist veraltet"</strong> → Die Dokumente im Skill müssen aktualisiert werden</li>
+                <li><strong>„Der Bot ignoriert meine Dokumente"</strong> → Skill aktiv? Beschreibung korrekt?</li>
+            </ul>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Übung Tag 1 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 1: ÜBUNG -->
+    <div class="section" id="section-day1-exercise">
+        <span class="day-badge">Tag 1 – Montag</span>
+        <h1>Übung: Erste Erkundung</h1>
+        <p class="subtitle">Jetzt bist du dran! Öffne die reflact Engine und erkunde sie eigenständig.</p>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 1: Admin-Bereich öffnen</div>
+            <ol>
+                <li>Öffne den Admin-Bereich der reflact Engine in deinem Browser</li>
+                <li>Melde dich mit deinen Zugangsdaten an</li>
+                <li>Finde heraus: Wie viele Projekte gibt es bereits?</li>
+                <li>Öffne ein bestehendes Projekt und schaue dir die Bot-Liste an</li>
+            </ol>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 2: Einen Bot ausprobieren</div>
+            <ol>
+                <li>Wähle einen bestehenden Bot aus und klicke auf „Testen"</li>
+                <li>Stelle dem Bot 3 verschiedene Fragen</li>
+                <li>Beobachte: Antwortet er sinnvoll? Wo hakt es?</li>
+                <li>Notiere dir deine Beobachtungen</li>
+            </ol>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 3: Vokabel-Check</div>
+            <p>Erkläre die folgenden Begriffe in eigenen Worten (schriftlich, 1-2 Sätze):</p>
+            <ul>
+                <li>LLM</li>
+                <li>RAG</li>
+                <li>Halluzination</li>
+                <li>Systemprompt</li>
+                <li>Skill</li>
+            </ul>
+        </div>
+
+        <div class="info-box tip">
+            <div class="info-box-title">💡 Tipp</div>
+            <p>Wenn du nicht weiterkommst, frag gerne nach! Im echten Support-Alltag ist Nachfragen eine Stärke, keine Schwäche.</p>
+        </div>
+
+        <h3>Checkliste Tag 1</h3>
+        <ul class="checklist">
+            <li><input type="checkbox" onchange="updateProgress()"> Ich weiß, was die reflact Engine ist und wofür sie eingesetzt wird</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich verstehe, wie ein LLM grundsätzlich funktioniert</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kann erklären, was RAG ist und warum es wichtig ist</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich habe den Admin-Bereich geöffnet und mich orientiert</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich habe einen Bot getestet und beobachtet</li>
+        </ul>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter zu Tag 2 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 2: ADMIN-OBERFLÄCHE -->
+    <div class="section" id="section-day2-admin">
+        <span class="day-badge">Tag 2 – Dienstag</span>
+        <h1>Der Admin-Bereich</h1>
+        <p class="subtitle">Hier wird alles verwaltet: Projekte, Bots, Berechtigungen und mehr.</p>
+
+        <h2>Navigations-Übersicht</h2>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">🗂️</div>
+                <div class="card-title">Hauptbereiche im Admin</div>
+            </div>
+            <table>
+                <thead><tr><th>Bereich</th><th>Funktion</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Projekte</strong></td><td>Container für zusammengehörige Bots</td></tr>
+                    <tr><td><strong>Bot-Liste</strong></td><td>Alle Bots eines Projekts mit Status</td></tr>
+                    <tr><td><strong>Bot bearbeiten</strong></td><td>Konfiguration, Skills, Insights, Export</td></tr>
+                    <tr><td><strong>Archiv</strong></td><td>Deaktivierte/archivierte Bots</td></tr>
+                    <tr><td><strong>Papierkorb</strong></td><td>Gelöschte Bots (wiederherstellbar)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Projekt-Management</h2>
+        <p>Jedes Projekt ist wie ein Ordner, der Bots zusammenfasst. Typische Projektstrukturen:</p>
+        <ul>
+            <li><strong>Nach Kunde:</strong> „Firma ABC – Support-Bots"</li>
+            <li><strong>Nach Zweck:</strong> „E-Learning Plattform"</li>
+            <li><strong>Nach Team:</strong> „Marketing-Bots"</li>
+        </ul>
+
+        <h2>Berechtigungssystem</h2>
+        <div class="card">
+            <p>Projekte können mit anderen Nutzern geteilt werden. Berechtigungsstufen:</p>
+            <table>
+                <thead><tr><th>Rolle</th><th>Rechte</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Besitzer</strong></td><td>Alles – inkl. Löschen & Teilen</td></tr>
+                    <tr><td><strong>Editor</strong></td><td>Bots bearbeiten, Skills verwalten</td></tr>
+                    <tr><td><strong>Viewer</strong></td><td>Nur Anschauen & Testen</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-box warning">
+            <div class="info-box-title">⚠️ Support-Wissen</div>
+            <p>Häufige Support-Anfrage: „Ich kann den Bot nicht bearbeiten!" → Prüfe zuerst die Berechtigung des Nutzers im Projekt.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Bots erstellen →</button>
+        </div>
+    </div>
+
+    <!-- TAG 2: BOTS ERSTELLEN -->
+    <div class="section" id="section-day2-bots">
+        <span class="day-badge">Tag 2 – Dienstag</span>
+        <h1>Bots erstellen & verwalten</h1>
+        <p class="subtitle">Vom leeren Projekt zum funktionierenden Bot – die wichtigsten Schritte.</p>
+
+        <h2>Einen neuen Bot erstellen</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="time">Schritt 1</div>
+                <p><strong>Projekt öffnen</strong> – Wähle das Projekt, in dem der Bot leben soll</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Schritt 2</div>
+                <p><strong>„Neuer Bot" klicken</strong> – Vergib einen sprechenden Namen</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Schritt 3</div>
+                <p><strong>Bot-Typ wählen</strong> – Chat, Voice oder Avatar</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Schritt 4</div>
+                <p><strong>Bot-Aufgabe definieren</strong> – Der Systemprompt (Persönlichkeit & Regeln)</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Schritt 5</div>
+                <p><strong>Skills hinzufügen</strong> – Wissen & Werkzeuge zuweisen</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Schritt 6</div>
+                <p><strong>Testen</strong> – Im Debug-Modus ausprobieren</p>
+            </div>
+        </div>
+
+        <h2>Bot-Aktionen</h2>
+        <div class="card">
+            <table>
+                <thead><tr><th>Aktion</th><th>Beschreibung</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Duplizieren</strong></td><td>Kopie eines Bots erstellen (z.B. für Variationen)</td></tr>
+                    <tr><td><strong>Exportieren</strong></td><td>Bot als ZIP-Datei sichern</td></tr>
+                    <tr><td><strong>Importieren</strong></td><td>Bot aus ZIP wiederherstellen</td></tr>
+                    <tr><td><strong>Archivieren</strong></td><td>Bot deaktivieren ohne zu löschen</td></tr>
+                    <tr><td><strong>Löschen</strong></td><td>Bot in den Papierkorb verschieben</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-box tip">
+            <div class="info-box-title">💡 Best Practice</div>
+            <p>Vor größeren Änderungen an einem Bot: Zuerst <strong>duplizieren</strong>, dann am Duplikat arbeiten. So bleibt das Original sicher.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Bot konfigurieren →</button>
+        </div>
+    </div>
+
+    <!-- TAG 2: BOT KONFIGURIEREN -->
+    <div class="section" id="section-day2-config">
+        <span class="day-badge">Tag 2 – Dienstag</span>
+        <h1>Bot konfigurieren</h1>
+        <p class="subtitle">Die sechs Hauptbereiche der Bot-Konfiguration im Detail.</p>
+
+        <h2>Die 6 Konfigurationsbereiche</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">📝</div>
+                <div class="card-title">1. Bot-Aufgabe (Systemprompt)</div>
+            </div>
+            <p>Hier definierst du <strong>wer</strong> der Bot ist und <strong>wie</strong> er sich verhält:</p>
+            <ul>
+                <li>Rolle & Persönlichkeit (z.B. „Du bist ein freundlicher Lernassistent...")</li>
+                <li>Verhaltensregeln (z.B. „Antworte immer auf Deutsch")</li>
+                <li>Grenzen (z.B. „Wenn du die Antwort nicht weißt, sage es ehrlich")</li>
+            </ul>
+            <pre><code>Du bist Lilo, eine freundliche Lernassistentin für das
+Thema Projektmanagement. Du antwortest in einfacher Sprache
+und gibst praktische Beispiele. Wenn du etwas nicht weißt,
+sagst du ehrlich: "Das weiß ich leider nicht."</code></pre>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">🔑</div>
+                <div class="card-title">2. Zugriff</div>
+            </div>
+            <p>Wer darf den Bot nutzen?</p>
+            <ul>
+                <li><strong>API-Token</strong> – Für programmatische Zugriffe</li>
+                <li><strong>Authentifizierung</strong> – Login-Pflicht oder öffentlich</li>
+                <li><strong>Berechtigungen</strong> – Wer darf was</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon purple">⚙️</div>
+                <div class="card-title">3. Konfiguration</div>
+            </div>
+            <ul>
+                <li><strong>Bot-Typ:</strong> Chat / Voice / Avatar</li>
+                <li><strong>LLM-Modell:</strong> GPT-4o, GPT-4o-mini, etc.</li>
+                <li><strong>Temperatur:</strong> Kreativität der Antworten (0 = präzise, 1 = kreativ)</li>
+                <li><strong>Stage-Manager:</strong> Gesprächsabschnitte definieren</li>
+                <li><strong>CSS:</strong> Design-Anpassungen</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon orange">🛡️</div>
+                <div class="card-title">4. Datenschutz</div>
+            </div>
+            <ul>
+                <li>DSGVO-Konformität</li>
+                <li>Datenaufbewahrungsfristen</li>
+                <li>Automatische Datenlöschung</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon cyan">📊</div>
+                <div class="card-title">5. Insights</div>
+            </div>
+            <ul>
+                <li><strong>Gedächtnis:</strong> Chatverlauf einsehen</li>
+                <li><strong>Supervisor:</strong> Live-Monitoring</li>
+                <li><strong>Statistik:</strong> Nutzung, Tokens, Kosten</li>
+                <li><strong>Feedback:</strong> Nutzer-Bewertungen (👍/👎)</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon red">🌐</div>
+                <div class="card-title">6. Einbetten & Exporte</div>
+            </div>
+            <ul>
+                <li><strong>iFrame:</strong> Bot auf externen Websites einbetten</li>
+                <li><strong>SCORM:</strong> Export für Lernplattformen (Moodle etc.)</li>
+                <li><strong>ZIP:</strong> Bot-Konfiguration sichern & teilen</li>
+            </ul>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Übung Tag 2 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 2: ÜBUNG -->
+    <div class="section" id="section-day2-exercise">
+        <span class="day-badge">Tag 2 – Dienstag</span>
+        <h1>Übung: Deinen ersten Bot bauen</h1>
+        <p class="subtitle">Erstelle einen eigenen Bot von Grund auf!</p>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe: Support-Bot erstellen</div>
+            <p>Erstelle einen einfachen FAQ-Bot für ein fiktives Café namens „Kaffeeglück":</p>
+            <ol>
+                <li><strong>Erstelle einen neuen Bot</strong> im Übungsprojekt</li>
+                <li><strong>Gib ihm den Namen:</strong> „Kaffeeglück Assistent"</li>
+                <li><strong>Schreibe einen Systemprompt:</strong>
+                    <ul>
+                        <li>Der Bot soll freundlich und hilfsbereit sein</li>
+                        <li>Er kennt die Öffnungszeiten: Mo-Fr 7-18 Uhr, Sa 8-16 Uhr, So geschlossen</li>
+                        <li>Er empfiehlt den „Cappuccino des Monats"</li>
+                        <li>Er antwortet auf Deutsch</li>
+                    </ul>
+                </li>
+                <li><strong>Teste den Bot</strong> mit diesen Fragen:
+                    <ul>
+                        <li>„Wann habt ihr geöffnet?"</li>
+                        <li>„Was könnt ihr empfehlen?"</li>
+                        <li>„Habt ihr WLAN?"</li>
+                    </ul>
+                </li>
+                <li><strong>Beobachte:</strong> Was passiert bei der WLAN-Frage? (Der Bot hat dazu keine Info!)</li>
+            </ol>
+        </div>
+
+        <div class="info-box info">
+            <div class="info-box-title">ℹ️ Erwartetes Ergebnis</div>
+            <p>Bei der WLAN-Frage wird der Bot wahrscheinlich etwas erfinden. Das ist ein perfektes Beispiel dafür, warum ein guter Systemprompt Grenzen setzen sollte – und warum Skills als Wissensquelle wichtig sind (kommt morgen!).</p>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Bonus-Aufgabe: Systemprompt verbessern</div>
+            <p>Ergänze den Systemprompt um diese Regel:</p>
+            <pre><code>Wenn du eine Frage nicht beantworten kannst, sage ehrlich:
+"Das weiß ich leider nicht. Am besten rufst du uns an
+unter 0123-456789."</code></pre>
+            <p>Teste die WLAN-Frage erneut – hat sich das Verhalten verbessert?</p>
+        </div>
+
+        <h3>Checkliste Tag 2</h3>
+        <ul class="checklist">
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kenne die Struktur des Admin-Bereichs</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kann ein Projekt und einen Bot erstellen</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich verstehe die 6 Konfigurationsbereiche</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich habe einen eigenen Bot gebaut und getestet</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich verstehe, warum ein guter Systemprompt wichtig ist</li>
+        </ul>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter zu Tag 3 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 3: SKILL-SYSTEM -->
+    <div class="section" id="section-day3-skills">
+        <span class="day-badge">Tag 3 – Mittwoch</span>
+        <h1>Das Skill-System</h1>
+        <p class="subtitle">Skills geben dem Bot konkretes Wissen und Werkzeuge – das Herzstück der Plattform.</p>
+
+        <h2>Was sind Skills?</h2>
+        <p>Ein <span class="term">Skill</span> ist eine Fähigkeit oder Wissensquelle, die du einem Bot zuweist. Ohne Skills ist ein Bot wie ein Mitarbeiter ohne Schulungsunterlagen – er kann nur raten.</p>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">🛠️</div>
+                <div class="card-title">Skill-Architektur</div>
+            </div>
+            <p>Jeder Skill hat diese Bestandteile:</p>
+            <table>
+                <thead><tr><th>Element</th><th>Funktion</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Beschreibung für die KI</strong></td><td>Erklärt dem LLM, wann es den Skill nutzen soll</td></tr>
+                    <tr><td><strong>Funktionsname</strong></td><td>Interner Bezeichner (z.B. „get_opening_hours")</td></tr>
+                    <tr><td><strong>Skill-ID</strong></td><td>Eindeutige ID für Programmierung (optional)</td></tr>
+                    <tr><td><strong>Aktiv/Inaktiv</strong></td><td>Kann zur Laufzeit ein-/ausgeschaltet werden</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-box warning">
+            <div class="info-box-title">⚠️ Wichtige Regel</div>
+            <p><strong>Richtwert: 3–10 Skills pro Bot</strong>, maximal 3 gleichzeitig aktiv. Zu viele Skills verwirren das LLM – es weiß dann nicht mehr, welchen es nutzen soll.</p>
+        </div>
+
+        <h2>Wie entscheidet das LLM, welchen Skill es nutzt?</h2>
+        <div class="card">
+            <p>Die <strong>Beschreibung für die KI</strong> ist entscheidend! Das LLM liest diese Beschreibung und entscheidet anhand der Nutzerfrage, ob der Skill relevant ist.</p>
+            <div class="info-box tip">
+                <div class="info-box-title">💡 Beispiel</div>
+                <p><strong>Gute Beschreibung:</strong> „Verwende diesen Skill, wenn der Nutzer nach Öffnungszeiten, Standort oder Kontaktdaten fragt."</p>
+                <p><strong>Schlechte Beschreibung:</strong> „Allgemeine Infos" (zu vage!)</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Skill-Typen →</button>
+        </div>
+    </div>
+
+    <!-- TAG 3: SKILL-TYPEN -->
+    <div class="section" id="section-day3-types">
+        <span class="day-badge">Tag 3 – Mittwoch</span>
+        <h1>Skill-Typen im Detail</h1>
+        <p class="subtitle">Es gibt verschiedene Skill-Typen für verschiedene Aufgaben.</p>
+
+        <div class="skill-grid">
+            <div class="skill-card">
+                <div class="icon">🔀</div>
+                <div class="name">Wenn-Dann</div>
+                <div class="desc">Feste Antworten & JavaScript-Aktionen</div>
+            </div>
+            <div class="skill-card">
+                <div class="icon">📄</div>
+                <div class="name">Dokumente</div>
+                <div class="desc">PDFs, Word-Dateien, Code (RAG)</div>
+            </div>
+            <div class="skill-card">
+                <div class="icon">🌐</div>
+                <div class="name">Online-Quellen</div>
+                <div class="desc">Live-URLs mit Echtzeitdaten</div>
+            </div>
+            <div class="skill-card">
+                <div class="icon">📥</div>
+                <div class="name">Offline-Websites</div>
+                <div class="desc">Gecachte Webseiten</div>
+            </div>
+            <div class="skill-card">
+                <div class="icon">🗃️</div>
+                <div class="name">Datenbanken</div>
+                <div class="desc">Strukturierte Key-Value-Daten</div>
+            </div>
+            <div class="skill-card">
+                <div class="icon">🔗</div>
+                <div class="name">Webhooks</div>
+                <div class="desc">Externe APIs aufrufen</div>
+            </div>
+            <div class="skill-card">
+                <div class="icon">🔌</div>
+                <div class="name">MCP-Server</div>
+                <div class="desc">Erweiterte Tool-Integration</div>
+            </div>
+        </div>
+
+        <h2>Die wichtigsten Typen erklärt</h2>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">🔀 Wenn-Dann-Skills</div>
+            <div class="accordion-body">
+                <p><strong>Wann verwenden:</strong> Für standardisierte Antworten, die immer gleich sein sollen.</p>
+                <p><strong>Beispiel:</strong> „Wenn jemand nach den Preisen fragt, zeige immer diese Preisliste."</p>
+                <p><strong>Besonderheit:</strong> Kann auch JavaScript-Code ausführen (z.B. Buttons anzeigen, Bilder einblenden).</p>
+                <pre><code>// Beispiel: Button-Karte anzeigen
+RAGAI.buttonsCard(["Preisliste", "Kontakt", "FAQ"]);</code></pre>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">📄 Dokumente-Skills (RAG)</div>
+            <div class="accordion-body">
+                <p><strong>Wann verwenden:</strong> Wenn der Bot Wissen aus Dateien nutzen soll.</p>
+                <p><strong>Unterstützte Formate:</strong> PDF, DOCX, TXT, Markdown, Code-Dateien</p>
+                <p><strong>So funktioniert es:</strong></p>
+                <ol>
+                    <li>Dokument hochladen</li>
+                    <li>System zerlegt es in kleine Textabschnitte</li>
+                    <li>Abschnitte werden als Vektoren gespeichert</li>
+                    <li>Bei Fragen werden relevante Abschnitte gefunden und dem LLM gegeben</li>
+                </ol>
+                <p><strong>Support-Hinweis:</strong> Wenn ein Bot „sein Dokument ignoriert", prüfe ob der Skill aktiv ist und ob die Beschreibung dem LLM klar macht, wann es das Dokument nutzen soll.</p>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">🌐 Online-Quellen</div>
+            <div class="accordion-body">
+                <p><strong>Wann verwenden:</strong> Für Echtzeitdaten von Websites.</p>
+                <p><strong>Beispiel:</strong> Aktuelle Wetterdaten, Fahrpläne, API-Abfragen</p>
+                <p><strong>Hinweis:</strong> Die URL kann dynamische Parameter enthalten, die zur Laufzeit befüllt werden.</p>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">🗃️ Datenbank-Skills</div>
+            <div class="accordion-body">
+                <p><strong>Wann verwenden:</strong> Für strukturierte Daten wie Produktkataloge oder Glossare.</p>
+                <p><strong>Format:</strong> Key-Value-Paare (Schlüssel → Wert)</p>
+                <p><strong>Vorteil gegenüber Dokumenten:</strong> Präziser bei strukturierten Abfragen (z.B. „Was kostet Produkt X?")</p>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">🔗 Webhooks</div>
+            <div class="accordion-body">
+                <p><strong>Wann verwenden:</strong> Wenn der Bot externe Systeme ansprechen soll.</p>
+                <p><strong>Beispiele:</strong></p>
+                <ul>
+                    <li>Newsletter-Anmeldung in Mailchimp</li>
+                    <li>Ticket erstellen in Jira</li>
+                    <li>Termin buchen in einem Kalender</li>
+                </ul>
+                <p><strong>Support-Hinweis:</strong> Webhook-Fehler sind oft Netzwerk- oder Berechtigungsprobleme des Ziel-Systems.</p>
+            </div>
+        </div>
+
+        <div class="quiz" id="quiz-skills">
+            <div class="quiz-question">🧪 Wissens-Check: Ein Kunde möchte, dass sein Bot die aktuelle Speisekarte zeigt, die sich täglich ändert. Welcher Skill-Typ eignet sich am besten?</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Wenn-Dann (feste Antwort)</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Dokumente (PDF hochladen)</div>
+            <div class="quiz-option" data-correct="true" onclick="selectQuizOption(this)">Online-Quelle (Live-URL zur Speisekarte)</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Datenbank (Key-Value)</div>
+            <button class="quiz-btn" onclick="checkQuiz('quiz-skills')">Antwort prüfen</button>
+            <div class="quiz-feedback" id="quiz-skills-feedback"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: RAG in der Praxis →</button>
+        </div>
+    </div>
+
+    <!-- TAG 3: RAG PRAXIS -->
+    <div class="section" id="section-day3-rag-praxis">
+        <span class="day-badge">Tag 3 – Mittwoch</span>
+        <h1>RAG in der Praxis</h1>
+        <p class="subtitle">Wie Dokumenten-Skills funktionieren und was dabei schiefgehen kann.</p>
+
+        <h2>Der RAG-Workflow für Dokumente</h2>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">📖</div>
+                <div class="card-title">Von der Datei zur Antwort</div>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="time">Upload</div>
+                    <p>Admin lädt ein PDF hoch (z.B. Handbuch, 50 Seiten)</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="time">Chunking</div>
+                    <p>System zerlegt das PDF in kleine Textabschnitte (~500 Wörter)</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="time">Embedding</div>
+                    <p>Jeder Abschnitt wird in einen Zahlenvektor umgewandelt</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="time">Nutzer fragt</div>
+                    <p>„Wie setze ich mein Passwort zurück?"</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="time">Suche</div>
+                    <p>System findet die 3-5 relevantesten Textabschnitte</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="time">Antwort</div>
+                    <p>LLM formuliert Antwort basierend auf gefundenen Textstellen</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>Häufige Probleme & Lösungen (Support-relevant!)</h2>
+
+        <div class="scenario">
+            <div class="scenario-label">Support-Szenario 1</div>
+            <p><strong>Nutzer sagt:</strong> „Der Bot gibt falsche Infos aus meinem Dokument."</p>
+            <p><strong>Mögliche Ursachen:</strong></p>
+            <ul>
+                <li>Das Dokument enthält widersprüchliche Informationen</li>
+                <li>Die Frage ist zu vage und das System findet den falschen Abschnitt</li>
+                <li>Das Dokument ist veraltet</li>
+            </ul>
+            <p><strong>Lösung:</strong> Dokument prüfen, ggf. aktualisieren. Im Debug-Log schauen, welche Textstellen der Bot verwendet hat.</p>
+        </div>
+
+        <div class="scenario">
+            <div class="scenario-label">Support-Szenario 2</div>
+            <p><strong>Nutzer sagt:</strong> „Der Bot sagt ‚Ich habe dazu keine Information', obwohl es im Dokument steht."</p>
+            <p><strong>Mögliche Ursachen:</strong></p>
+            <ul>
+                <li>Die Skill-Beschreibung sagt dem LLM nicht, wann es den Skill nutzen soll</li>
+                <li>Der Skill ist deaktiviert</li>
+                <li>Die Frage verwendet andere Begriffe als das Dokument</li>
+            </ul>
+            <p><strong>Lösung:</strong> Skill-Status prüfen, Beschreibung verbessern, Synonyme im Dokument ergänzen.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Übung Tag 3 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 3: ÜBUNG -->
+    <div class="section" id="section-day3-exercise">
+        <span class="day-badge">Tag 3 – Mittwoch</span>
+        <h1>Übung: Skills anlegen</h1>
+        <p class="subtitle">Erweitere deinen Kaffeeglück-Bot mit echtem Wissen!</p>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 1: Wenn-Dann-Skill erstellen</div>
+            <ol>
+                <li>Öffne deinen „Kaffeeglück Assistent" Bot</li>
+                <li>Erstelle einen neuen <strong>Wenn-Dann-Skill</strong></li>
+                <li>Beschreibung: „Verwende diesen Skill, wenn der Nutzer nach WLAN fragt"</li>
+                <li>Antwort: „Ja, wir haben kostenfreies WLAN! Das Passwort lautet: Kaffee2024"</li>
+                <li>Teste: Frage den Bot „Habt ihr WLAN?" – funktioniert es jetzt?</li>
+            </ol>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 2: Dokument-Skill erstellen</div>
+            <ol>
+                <li>Erstelle eine kurze Textdatei (TXT) mit einer fiktiven Speisekarte:
+                    <pre><code>Kaffeeglück – Speisekarte
+
+Getränke:
+- Espresso: 2,50€
+- Cappuccino: 3,80€
+- Latte Macchiato: 4,20€
+- Filterkaffee: 2,00€
+- Chai Latte: 3,90€
+
+Speisen:
+- Croissant: 2,80€
+- Avocado-Toast: 7,50€
+- Käsekuchen: 4,50€
+- Granola Bowl: 6,90€</code></pre>
+                </li>
+                <li>Erstelle einen <strong>Dokumente-Skill</strong> und lade die Datei hoch</li>
+                <li>Beschreibung: „Verwende diesen Skill, wenn der Nutzer nach Preisen, Getränken oder Speisen fragt"</li>
+                <li>Teste: „Was kostet ein Cappuccino?" und „Was habt ihr zu essen?"</li>
+            </ol>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 3: Grenzen testen</div>
+            <p>Stelle dem Bot jetzt schwierige Fragen und beobachte sein Verhalten:</p>
+            <ul>
+                <li>„Habt ihr auch Alkohol?" (nicht in der Karte)</li>
+                <li>„Kann ich auch mit Kreditkarte zahlen?" (keine Info dazu)</li>
+                <li>„Was ist günstiger – Espresso oder Cappuccino?" (Vergleich)</li>
+            </ul>
+            <p>Notiere: Wo funktioniert es? Wo nicht? Was könnte man verbessern?</p>
+        </div>
+
+        <h3>Checkliste Tag 3</h3>
+        <ul class="checklist">
+            <li><input type="checkbox" onchange="updateProgress()"> Ich verstehe das Skill-System und die verschiedenen Typen</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kann einen Wenn-Dann-Skill erstellen</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kann einen Dokument-Skill erstellen und nutzen</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich weiß, warum die Skill-Beschreibung so wichtig ist</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kenne typische RAG-Probleme und ihre Lösungen</li>
+        </ul>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter zu Tag 4 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 4: BOT-TYPEN -->
+    <div class="section" id="section-day4-advanced">
+        <span class="day-badge">Tag 4 – Donnerstag</span>
+        <h1>Bot-Typen: Chat, Voice & Avatar</h1>
+        <p class="subtitle">Die reflact Engine unterstützt verschiedene Interaktionsformen.</p>
+
+        <h2>Die drei Bot-Typen</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">💬</div>
+                <div class="card-title">Chat-Bot</div>
+            </div>
+            <p><strong>Standard-Typ.</strong> Textbasierte Konversation wie bei ChatGPT.</p>
+            <ul>
+                <li>Nachrichtenverlauf mit Sprech-Blasen</li>
+                <li>Optional: Spracheingabe via Mikrofon</li>
+                <li>Kann Bilder, Buttons, Karten anzeigen</li>
+                <li>Am einfachsten zu erstellen und zu warten</li>
+            </ul>
+            <p><strong>Einsatz:</strong> FAQ, Support, Wissensvermittlung, Recherche</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">🎙️</div>
+                <div class="card-title">Voice-Bot (Audio-Bot)</div>
+            </div>
+            <p><strong>Nur Sprache, kein Text.</strong> Der Bot spricht mit dem Nutzer.</p>
+            <ul>
+                <li>Text-to-Speech via ElevenLabs oder OpenAI TTS</li>
+                <li>Speech-to-Text für Nutzereingabe</li>
+                <li>Kein Chat-Verlauf sichtbar</li>
+                <li>Ideal für hands-free Szenarien</li>
+            </ul>
+            <p><strong>Einsatz:</strong> Sprachassistenten, barrierefreie Anwendungen, Telefon-Bots</p>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon purple">🎭</div>
+                <div class="card-title">Avatar-Bot</div>
+            </div>
+            <p><strong>Visueller Charakter</strong> mit Lip-Sync und Gestik.</p>
+            <ul>
+                <li>HeyGen Streaming Avatar oder Custom-Avatar</li>
+                <li>Spricht mit synchroner Lippenbewegung</li>
+                <li>Fühlt sich „menschlicher" an</li>
+                <li>Höherer Ressourcenverbrauch (Streaming)</li>
+            </ul>
+            <p><strong>Einsatz:</strong> E-Learning, Onboarding, immersive Erlebnisse, Präsentationen</p>
+        </div>
+
+        <div class="info-box info">
+            <div class="info-box-title">ℹ️ Support-Hinweis</div>
+            <p>Avatar-Bots verbrauchen deutlich mehr Ressourcen. Wenn Nutzer über Ladezeiten klagen, prüfe ob ein Chat-Bot für den Anwendungsfall nicht ausreichen würde.</p>
+        </div>
+
+        <h2>Stage-Manager: Gesprächsabschnitte</h2>
+        <div class="card">
+            <p>Der <span class="term">Stage-Manager</span> erlaubt es, ein Gespräch in Abschnitte (Stages) zu unterteilen:</p>
+            <div class="diagram">
+                <div class="flow-diagram">
+                    <div class="flow-box" style="background:#dbeafe;color:#1e40af;">🏠 Intro</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box" style="background:#d1fae5;color:#065f46;">📖 Lektion 1</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box" style="background:#ede9fe;color:#5b21b6;">📝 Quiz</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box" style="background:#fae8ff;color:#86198f;">🎓 Abschluss</div>
+                </div>
+            </div>
+            <p>Jede Stage kann eigene Skills, Prompts und Verhaltensregeln haben.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Insights & Monitoring →</button>
+        </div>
+    </div>
+
+    <!-- TAG 4: INSIGHTS -->
+    <div class="section" id="section-day4-insights">
+        <span class="day-badge">Tag 4 – Donnerstag</span>
+        <h1>Insights & Monitoring</h1>
+        <p class="subtitle">Wie du den Bot und seine Nutzung überwachst – essenziell für den Support!</p>
+
+        <h2>Insights-Bereiche</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">💭</div>
+                <div class="card-title">Gedächtnis</div>
+            </div>
+            <p>Hier siehst du den <strong>Chatverlauf aller Nutzer</strong>. Wichtig für:</p>
+            <ul>
+                <li>Nachvollziehen, was ein Nutzer gefragt hat</li>
+                <li>Prüfen, ob der Bot korrekt geantwortet hat</li>
+                <li>Kontext verstehen bei Support-Anfragen</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">👁️</div>
+                <div class="card-title">Supervisor</div>
+            </div>
+            <p><strong>Live-Monitoring</strong> von aktiven Gesprächen:</p>
+            <ul>
+                <li>Zusammenfassungen laufender Chats sehen</li>
+                <li>Bei kritischen Events benachrichtigt werden</li>
+                <li>Manuell in Gespräche eingreifen (Admin-Knöpfe)</li>
+            </ul>
+            <div class="info-box tip">
+                <div class="info-box-title">💡 Support-Tipp</div>
+                <p>Wenn ein Nutzer sich beschwert und das Gespräch noch aktiv ist, kannst du über den Supervisor live sehen, was passiert.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon purple">📊</div>
+                <div class="card-title">Statistik</div>
+            </div>
+            <p>Übersicht über <strong>Verbrauch und Nutzung</strong>:</p>
+            <ul>
+                <li>API-Requests pro Tag/Woche/Monat</li>
+                <li>Token-Verbrauch (Kosten-Indikator)</li>
+                <li>Avatar-Streaming-Minuten</li>
+                <li>Text-to-Speech Nutzung</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon orange">⭐</div>
+                <div class="card-title">Feedback</div>
+            </div>
+            <p>Nutzer-Bewertungen einzelner Antworten:</p>
+            <ul>
+                <li>👍 / 👎 pro Nachricht</li>
+                <li>Zeigt dir, wo der Bot gut funktioniert und wo nicht</li>
+                <li>Perfekte Grundlage für Verbesserungsvorschläge!</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon cyan">🔑</div>
+                <div class="card-title">Nutzerwerte (KeyVal)</div>
+            </div>
+            <p>Gespeicherte Daten über Nutzer:</p>
+            <ul>
+                <li>Name, Abteilung, Präferenzen</li>
+                <li>Punkte, Fortschritte, Scoring</li>
+                <li>Beliebige Key-Value-Paare</li>
+            </ul>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Einbetten & Export →</button>
+        </div>
+    </div>
+
+    <!-- TAG 4: EINBETTEN -->
+    <div class="section" id="section-day4-embed">
+        <span class="day-badge">Tag 4 – Donnerstag</span>
+        <h1>Einbetten & Export</h1>
+        <p class="subtitle">Wie Bots auf Websites und in Lernplattformen landen.</p>
+
+        <h2>iFrame-Embedding</h2>
+        <div class="card">
+            <p>Der häufigste Weg, einen Bot zu veröffentlichen: Als iFrame auf einer Website einbetten.</p>
+            <pre><code>&lt;iframe
+  src="https://bot.reflact.com/BOT-ID"
+  width="400"
+  height="600"
+  style="border: none;"
+&gt;&lt;/iframe&gt;</code></pre>
+            <p>Der Bot passt sich responsive an und kann über die <code>botApi</code> auch von außen gesteuert werden.</p>
+        </div>
+
+        <h2>SCORM-Export</h2>
+        <div class="card">
+            <p><strong>SCORM</strong> ist ein Standard für E-Learning-Inhalte. Damit kann ein Bot in Lernplattformen wie Moodle, Blackboard oder iSpring eingebettet werden.</p>
+            <ul>
+                <li>Export als SCORM 1.2 Paket (ZIP)</li>
+                <li>Tracking von Fortschritt und Punkten</li>
+                <li>Kompatibel mit allen gängigen LMS-Systemen</li>
+            </ul>
+        </div>
+
+        <h2>Weitere Export-Optionen</h2>
+        <table>
+            <thead><tr><th>Export</th><th>Zweck</th></tr></thead>
+            <tbody>
+                <tr><td><strong>ZIP-Export</strong></td><td>Bot-Konfiguration sichern oder teilen</td></tr>
+                <tr><td><strong>Import-Link</strong></td><td>Bot in anderem Projekt wiederherstellen</td></tr>
+                <tr><td><strong>Adobe Connect Pod</strong></td><td>Als Plugin für Adobe Connect Meetings</td></tr>
+            </tbody>
+        </table>
+
+        <div class="info-box warning">
+            <div class="info-box-title">⚠️ Häufige Support-Anfrage</div>
+            <p>„Der Bot zeigt sich nicht auf meiner Website!" → Prüfe: Ist die Domain in den CORS-Einstellungen erlaubt? Ist der Bot öffentlich freigegeben?</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Übung Tag 4 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 4: ÜBUNG -->
+    <div class="section" id="section-day4-exercise">
+        <span class="day-badge">Tag 4 – Donnerstag</span>
+        <h1>Übung: Analyse & Exploration</h1>
+        <p class="subtitle">Heute geht es darum, bestehende Bots zu analysieren – so wie im echten Support-Alltag.</p>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 1: Insights erkunden</div>
+            <ol>
+                <li>Öffne einen bestehenden Bot (nicht deinen Übungs-Bot)</li>
+                <li>Gehe zu „Insights" → „Gedächtnis"</li>
+                <li>Lies 3-5 vergangene Konversationen durch</li>
+                <li>Notiere: Welche Fragen werden häufig gestellt? Wo hat der Bot Probleme?</li>
+            </ol>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 2: Feedback auswerten</div>
+            <ol>
+                <li>Gehe zu „Insights" → „Feedback"</li>
+                <li>Finde Nachrichten mit 👎 (negatives Feedback)</li>
+                <li>Analysiere: Warum war die Antwort schlecht? Was hätte der Bot anders sagen sollen?</li>
+                <li>Überlege: Welcher Skill könnte helfen, diese Antwort zu verbessern?</li>
+            </ol>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 3: Bot-Typen vergleichen</div>
+            <p>Wenn verfügbar, teste verschiedene Bot-Typen und notiere Unterschiede:</p>
+            <ul>
+                <li>Wie fühlt sich ein Chat-Bot vs. ein Voice-Bot an?</li>
+                <li>Welche Vor-/Nachteile hat jeder Typ?</li>
+                <li>Für welche Zielgruppe eignet sich welcher Typ?</li>
+            </ul>
+        </div>
+
+        <h3>Checkliste Tag 4</h3>
+        <ul class="checklist">
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kenne die drei Bot-Typen und ihre Einsatzbereiche</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kann die Insights-Bereiche nutzen</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich verstehe, wie Bots auf Websites eingebettet werden</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich habe reale Konversationen und Feedback analysiert</li>
+        </ul>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter zu Tag 5 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 5: SUPPORT-ROLLE -->
+    <div class="section" id="section-day5-support">
+        <span class="day-badge">Tag 5 – Freitag</span>
+        <h1>Deine Support-Rolle</h1>
+        <p class="subtitle">Was dich im Alltag erwartet und wie du Nutzern effektiv hilfst.</p>
+
+        <h2>Deine drei Hauptaufgaben</h2>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">🛟</div>
+                <div class="card-title">1. Nutzer unterstützen</div>
+            </div>
+            <ul>
+                <li>Fragen zur Bedienung beantworten</li>
+                <li>Bei Fehlern helfen und Lösungen anbieten</li>
+                <li>Nutzer an die richtige Dokumentation verweisen</li>
+                <li>Einfache Konfigurationsprobleme lösen</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">🛡️</div>
+                <div class="card-title">2. Entwickler-Team schützen</div>
+            </div>
+            <ul>
+                <li>Einfache Anfragen eigenständig lösen</li>
+                <li>Nur „echte" Bugs und technische Probleme weiterleiten</li>
+                <li>Doppelte Anfragen erkennen und zusammenführen</li>
+                <li>Support-Tickets mit allen nötigen Infos versehen</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon purple">📝</div>
+                <div class="card-title">3. Feedback & Wünsche dokumentieren</div>
+            </div>
+            <ul>
+                <li>Feature-Wünsche heraushören und notieren</li>
+                <li>Backlog-Einträge formulieren (wer, was, warum)</li>
+                <li>Wiederkehrende Probleme erkennen und melden</li>
+                <li>Nutzer-Perspektive ins Team bringen</li>
+            </ul>
+        </div>
+
+        <h2>Die Support-Pyramide</h2>
+        <div class="diagram">
+            <div style="text-align:center;padding:1rem;">
+                <div style="background:#fee2e2;color:#991b1b;padding:0.5rem;border-radius:8px 8px 0 0;max-width:200px;margin:0 auto;">
+                    <strong>Entwickler</strong><br><small>Bugs, neue Features</small>
+                </div>
+                <div style="background:#fef3c7;color:#92400e;padding:0.5rem;max-width:350px;margin:0 auto;">
+                    <strong>Du (Support)</strong><br><small>Konfiguration, Bedienung, Dokumentation</small>
+                </div>
+                <div style="background:#d1fae5;color:#065f46;padding:0.5rem;border-radius:0 0 8px 8px;max-width:500px;margin:0 auto;">
+                    <strong>Self-Service</strong><br><small>Handbuch, FAQ, Tooltips</small>
+                </div>
+            </div>
+            <p style="text-align:center;font-size:0.85rem;color:var(--text-muted);margin-top:0.5rem;">Je weiter oben, desto weniger Anfragen sollten ankommen</p>
+        </div>
+
+        <h2>Wann eskalierst du an das Entwickler-Team?</h2>
+        <div class="card">
+            <table>
+                <thead><tr><th>Eskalieren ✅</th><th>Selbst lösen 🙋</th></tr></thead>
+                <tbody>
+                    <tr><td>Server-Fehler (500er)</td><td>Nutzer findet Funktion nicht</td></tr>
+                    <tr><td>Daten gehen verloren</td><td>Bot antwortet schlecht → Skills prüfen</td></tr>
+                    <tr><td>Login funktioniert nicht</td><td>Berechtigung fehlt → Admin fragen</td></tr>
+                    <tr><td>Feature existiert nicht</td><td>Feature existiert, Nutzer kennt es nicht</td></tr>
+                    <tr><td>Sicherheitsproblem</td><td>Nutzer will Feature-Wunsch</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Debug-Log lesen →</button>
+        </div>
+    </div>
+
+    <!-- TAG 5: DEBUG-LOG -->
+    <div class="section" id="section-day5-debug">
+        <span class="day-badge">Tag 5 – Freitag</span>
+        <h1>Debug-Log lesen</h1>
+        <p class="subtitle">Das Debug-Log ist dein wichtigstes Werkzeug im Support. Hier siehst du, was hinter den Kulissen passiert.</p>
+
+        <h2>Debug-Log aktivieren</h2>
+        <p>Beim Testen eines Bots kannst du den <strong>Debug-Modus</strong> einschalten. Dann siehst du neben den Chat-Nachrichten auch technische Protokoll-Einträge.</p>
+
+        <h2>Die wichtigsten Log-Einträge</h2>
+
+        <div class="card">
+            <table>
+                <thead><tr><th>Log-Eintrag</th><th>Bedeutung</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>chatcompletion</code></td>
+                        <td>LLM verarbeitet Anfrage → zeigt Token-Verbrauch</td>
+                    </tr>
+                    <tr>
+                        <td><code>tool runStart</code></td>
+                        <td>Ein Skill wird aufgerufen</td>
+                    </tr>
+                    <tr>
+                        <td><code>tool runFinish</code></td>
+                        <td>Skill-Ausführung abgeschlossen</td>
+                    </tr>
+                    <tr>
+                        <td><code>tool runError</code></td>
+                        <td>⚠️ Skill-Fehler! Details prüfen</td>
+                    </tr>
+                    <tr>
+                        <td><code>skill enabled</code></td>
+                        <td>Skill wurde aktiviert</td>
+                    </tr>
+                    <tr>
+                        <td><code>skill disabled</code></td>
+                        <td>Skill wurde deaktiviert</td>
+                    </tr>
+                    <tr>
+                        <td><code>texttospeech</code></td>
+                        <td>Audio-Generierung (Voice/Avatar)</td>
+                    </tr>
+                    <tr>
+                        <td><code>heygen_streaming_avatar</code></td>
+                        <td>Avatar-Rendering-Status</td>
+                    </tr>
+                    <tr>
+                        <td><code>avatarbotNewSession</code></td>
+                        <td>Avatar-Session gestartet</td>
+                    </tr>
+                    <tr>
+                        <td><code>docsearch</code></td>
+                        <td>Dokumentensuche (RAG) – zeigt gefundene Stellen</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Debug-Log lesen: Ein Beispiel</h2>
+        <div class="card">
+            <pre><code>📋 Beispiel-Ablauf im Debug-Log:
+
+1. [chatcompletion] Tokens: 450 in, 120 out | Model: gpt-4o
+   → LLM hat die Frage verarbeitet
+
+2. [tool runStart] skill: "get_menu" (Dokumente)
+   → LLM hat entschieden, den Speisekarten-Skill zu nutzen
+
+3. [docsearch] Found 3 chunks, relevance: 0.87, 0.72, 0.65
+   → 3 Textabschnitte gefunden, bester hat 87% Relevanz
+
+4. [tool runFinish] skill: "get_menu" | duration: 230ms
+   → Skill erfolgreich, Dauer: 230ms
+
+5. [chatcompletion] Tokens: 890 in, 85 out | Model: gpt-4o
+   → LLM formuliert finale Antwort mit den Skill-Daten</code></pre>
+        </div>
+
+        <h2>Typische Fehler im Debug-Log</h2>
+
+        <div class="info-box danger">
+            <div class="info-box-title">🚨 tool runError</div>
+            <p><strong>Bedeutung:</strong> Ein Skill konnte nicht ausgeführt werden.<br>
+            <strong>Häufige Ursachen:</strong> Webhook-URL nicht erreichbar, Dokument beschädigt, API-Key abgelaufen.<br>
+            <strong>Aktion:</strong> Fehlerdetails lesen, ggf. an Entwickler eskalieren.</p>
+        </div>
+
+        <div class="info-box warning">
+            <div class="info-box-title">⚠️ Hoher Token-Verbrauch</div>
+            <p><strong>Bedeutung:</strong> Sehr viele Tokens pro Anfrage.<br>
+            <strong>Häufige Ursachen:</strong> Zu viele aktive Skills, zu langer Chatverlauf, große Dokumente.<br>
+            <strong>Aktion:</strong> Skill-Anzahl prüfen, ggf. Skills deaktivieren.</p>
+        </div>
+
+        <div class="info-box info">
+            <div class="info-box-title">ℹ️ docsearch mit niedriger Relevanz</div>
+            <p><strong>Bedeutung:</strong> Die gefundenen Textstellen passen nur schlecht zur Frage.<br>
+            <strong>Häufige Ursachen:</strong> Dokument enthält die Info nicht, Frage zu unspezifisch.<br>
+            <strong>Aktion:</strong> Dokument-Inhalt prüfen, ggf. ergänzen.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Troubleshooting →</button>
+        </div>
+    </div>
+
+    <!-- TAG 5: TROUBLESHOOTING -->
+    <div class="section" id="section-day5-troubleshoot">
+        <span class="day-badge">Tag 5 – Freitag</span>
+        <h1>Troubleshooting-Guide</h1>
+        <p class="subtitle">Die häufigsten Support-Anfragen und wie du sie löst.</p>
+
+        <h2>Dein Vorgehen bei Support-Anfragen</h2>
+        <div class="card">
+            <ol>
+                <li><strong>Problem verstehen</strong> – Was genau passiert? Was erwartet der Nutzer?</li>
+                <li><strong>Reproduzieren</strong> – Kannst du das Problem nachstellen?</li>
+                <li><strong>Debug-Log prüfen</strong> – Was zeigt das Protokoll?</li>
+                <li><strong>Lösung anbieten</strong> – Oder eskalieren mit allen Infos</li>
+            </ol>
+        </div>
+
+        <h2>Häufige Probleme & Lösungen</h2>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">❓ „Der Bot antwortet nicht"</div>
+            <div class="accordion-body">
+                <p><strong>Prüfe:</strong></p>
+                <ul>
+                    <li>Ist der Bot aktiv (nicht archiviert)?</li>
+                    <li>Hat der Nutzer die richtige URL?</li>
+                    <li>Gibt es Server-Fehler im Debug-Log?</li>
+                    <li>Ist das LLM-Modell verfügbar? (OpenAI-Ausfälle kommen vor)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">❓ „Der Bot gibt falsche Antworten"</div>
+            <div class="accordion-body">
+                <p><strong>Prüfe:</strong></p>
+                <ul>
+                    <li>Sind die Skills korrekt konfiguriert und aktiv?</li>
+                    <li>Ist die Skill-Beschreibung präzise genug?</li>
+                    <li>Sind die Dokumente aktuell?</li>
+                    <li>Im Debug-Log: Welche Textstellen wurden gefunden? Relevanz?</li>
+                </ul>
+                <p><strong>Lösung:</strong> Skill-Beschreibung verbessern, Dokumente aktualisieren, ggf. Wenn-Dann-Skill für die spezifische Frage ergänzen.</p>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">❓ „Ich kann meinen Bot nicht bearbeiten"</div>
+            <div class="accordion-body">
+                <p><strong>Prüfe:</strong></p>
+                <ul>
+                    <li>Welche Berechtigung hat der Nutzer? (Viewer kann nicht bearbeiten!)</li>
+                    <li>Ist der Nutzer im richtigen Projekt?</li>
+                    <li>Ist der Bot vielleicht archiviert?</li>
+                </ul>
+                <p><strong>Lösung:</strong> Projekt-Besitzer bitten, die Berechtigung zu ändern.</p>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">❓ „Der Bot erscheint nicht auf meiner Website"</div>
+            <div class="accordion-body">
+                <p><strong>Prüfe:</strong></p>
+                <ul>
+                    <li>Stimmt der iFrame-Code? (URL korrekt?)</li>
+                    <li>Ist der Bot öffentlich zugänglich oder nur intern?</li>
+                    <li>Browser-Konsole: Gibt es CORS-Fehler?</li>
+                    <li>Blockiert ein Adblocker oder eine Firewall den iFrame?</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">❓ „Der Avatar-Bot ist langsam / funktioniert nicht"</div>
+            <div class="accordion-body">
+                <p><strong>Prüfe:</strong></p>
+                <ul>
+                    <li>Internetverbindung stabil? (Avatar braucht gute Bandbreite)</li>
+                    <li>Browser aktuell? (Chrome empfohlen)</li>
+                    <li>Debug-Log: Fehler bei <code>heygen_streaming_avatar</code>?</li>
+                    <li>Mikrofon-Berechtigung erteilt?</li>
+                </ul>
+                <p><strong>Tipp:</strong> Avatar-Bots sind ressourcenintensiv. Bei schwacher Hardware empfehle einen Chat-Bot als Alternative.</p>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">❓ „Der Bot vergisst, was ich gesagt habe"</div>
+            <div class="accordion-body">
+                <p><strong>Erklärung:</strong> LLMs haben ein begrenztes Kontextfenster. Bei sehr langen Gesprächen gehen ältere Nachrichten verloren.</p>
+                <p><strong>Lösung:</strong> Das ist eine technische Einschränkung. Empfehle dem Nutzer, bei einem neuen Thema einen neuen Chat zu starten.</p>
+            </div>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion(this)">❓ „Mein SCORM-Export funktioniert nicht in Moodle"</div>
+            <div class="accordion-body">
+                <p><strong>Prüfe:</strong></p>
+                <ul>
+                    <li>SCORM 1.2 Format ausgewählt? (nicht SCORM 2004)</li>
+                    <li>ZIP-Datei nicht entpackt hochgeladen?</li>
+                    <li>Moodle-Version kompatibel?</li>
+                    <li>Popups im Browser erlaubt?</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Übung Tag 5 →</button>
+        </div>
+    </div>
+
+    <!-- TAG 5: ÜBUNG -->
+    <div class="section" id="section-day5-exercise">
+        <span class="day-badge">Tag 5 – Freitag</span>
+        <h1>Übung: Support-Szenarien</h1>
+        <p class="subtitle">Teste dein Wissen an realistischen Support-Anfragen!</p>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 1: Support-Mail beantworten</div>
+            <p>Formuliere eine hilfreiche Antwort auf diese Anfrage:</p>
+            <div class="scenario">
+                <div class="scenario-label">Nutzer-Anfrage</div>
+                <p><em>„Hallo, ich habe einen Bot erstellt und Dokumente hochgeladen, aber wenn ich den Bot frage, sagt er immer nur ‚Ich kann dir dabei leider nicht helfen'. Was mache ich falsch?"</em></p>
+            </div>
+            <p>Schreibe deine Antwort auf und bedenke:</p>
+            <ul>
+                <li>Welche Informationen brauchst du noch?</li>
+                <li>Was sind die wahrscheinlichsten Ursachen?</li>
+                <li>Welche Schritte empfiehlst du?</li>
+            </ul>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 2: Feature-Wunsch erkennen</div>
+            <p>Lies diese Anfrage und formuliere einen <strong>Backlog-Eintrag</strong>:</p>
+            <div class="scenario">
+                <div class="scenario-label">Nutzer-Anfrage</div>
+                <p><em>„Wäre es möglich, dass der Bot automatisch eine E-Mail an mich schickt, wenn ein Nutzer dreimal hintereinander negatives Feedback gibt? Das wäre super hilfreich für mich als Bot-Admin."</em></p>
+            </div>
+            <p>Formuliere einen Backlog-Eintrag mit:</p>
+            <ul>
+                <li><strong>Titel:</strong> (kurz und beschreibend)</li>
+                <li><strong>Als</strong> [Rolle] <strong>möchte ich</strong> [Feature], <strong>damit</strong> [Nutzen]</li>
+                <li><strong>Akzeptanzkriterien:</strong> (Wann ist es „fertig"?)</li>
+            </ul>
+        </div>
+
+        <div class="exercise">
+            <div class="exercise-header">✏️ Aufgabe 3: Debug-Log analysieren</div>
+            <p>Schaue dir dieses (vereinfachte) Debug-Log an. Was ist das Problem?</p>
+            <pre><code>[chatcompletion] Tokens: 380 in, 15 out | Model: gpt-4o
+[tool runStart] skill: "product_catalog" (Dokumente)
+[docsearch] Found 0 chunks, relevance: -
+[tool runFinish] skill: "product_catalog" | duration: 45ms
+[chatcompletion] Tokens: 420 in, 35 out | Model: gpt-4o
+→ Bot-Antwort: "Leider habe ich dazu keine Informationen."</code></pre>
+            <p><strong>Fragen:</strong></p>
+            <ul>
+                <li>Welcher Skill wurde aufgerufen?</li>
+                <li>Was ist das Problem? (Tipp: „Found 0 chunks")</li>
+                <li>Was könnten mögliche Ursachen sein?</li>
+                <li>Was empfiehlst du dem Nutzer?</li>
+            </ul>
+        </div>
+
+        <div class="quiz" id="quiz-debug">
+            <div class="quiz-question">🧪 Wissens-Check: Im Debug-Log siehst du „Found 0 chunks" bei einem Dokumente-Skill. Was ist die wahrscheinlichste Ursache?</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Der Server ist überlastet</div>
+            <div class="quiz-option" data-correct="true" onclick="selectQuizOption(this)">Das hochgeladene Dokument enthält keine relevanten Informationen zur Frage</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Der Nutzer hat zu schnell getippt</div>
+            <div class="quiz-option" onclick="selectQuizOption(this)">Das LLM-Modell ist veraltet</div>
+            <button class="quiz-btn" onclick="checkQuiz('quiz-debug')">Antwort prüfen</button>
+            <div class="quiz-feedback" id="quiz-debug-feedback"></div>
+        </div>
+
+        <h3>Checkliste Tag 5</h3>
+        <ul class="checklist">
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kenne meine Support-Rolle und deren Grenzen</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kann das Debug-Log lesen und interpretieren</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich weiß, wann ich eskaliere und wann ich selbst löse</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich kann Feature-Wünsche als Backlog-Einträge formulieren</li>
+            <li><input type="checkbox" onchange="updateProgress()"> Ich habe die Support-Szenarien durchgearbeitet</li>
+        </ul>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück</button>
+            <button class="nav-btn next" onclick="nextSection()">Weiter: Abschluss →</button>
+        </div>
+    </div>
+
+    <!-- ABSCHLUSS -->
+    <div class="section" id="section-day5-final">
+        <span class="day-badge">🎓 Abschluss</span>
+        <h1>Herzlichen Glückwunsch!</h1>
+        <p class="subtitle">Du hast die Schulung abgeschlossen. Hier ist dein Fahrplan für die nächsten Wochen.</p>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">✅</div>
+                <div class="card-title">Was du gelernt hast</div>
+            </div>
+            <ul>
+                <li>✅ Grundlagen: LLMs, RAG, Plattform-Architektur</li>
+                <li>✅ Admin: Projekte, Bots, Konfiguration</li>
+                <li>✅ Skills: Typen, Anlage, Troubleshooting</li>
+                <li>✅ Fortgeschritten: Bot-Typen, Insights, Embedding</li>
+                <li>✅ Support: Debug-Log, Troubleshooting, Eskalation</li>
+            </ul>
+        </div>
+
+        <h2>Deine nächsten Schritte</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="time">Woche 2-3</div>
+                <p><strong>Begleitung:</strong> Arbeite im Support mit, aber mit einem Mentor an der Seite</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Woche 4</div>
+                <p><strong>Eigenständigkeit:</strong> Übernimm einfache Support-Anfragen selbstständig</p>
+            </div>
+            <div class="timeline-item">
+                <div class="time">Fortlaufend</div>
+                <p><strong>Vertiefung:</strong> Lerne neue Features kennen, besuche Team-Meetings, lies Release-Notes</p>
+            </div>
+        </div>
+
+        <h2>Ressourcen für dich</h2>
+        <div class="card">
+            <table>
+                <thead><tr><th>Ressource</th><th>Wofür</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Handbuch</strong> (docs/Handbuch/)</td><td>Nachschlagen aller Features</td></tr>
+                    <tr><td><strong>FAQ</strong> (docs/Handbuch/05-FAQ.md)</td><td>Best Practices & häufige Fragen</td></tr>
+                    <tr><td><strong>Diese Schulung</strong></td><td>Jederzeit zurückkehren und nachlesen</td></tr>
+                    <tr><td><strong>Dein Team</strong></td><td>Fragen stellen ist immer erlaubt!</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>10 goldene Regeln für den Support</h2>
+        <div class="card">
+            <ol>
+                <li><strong>Höre zu</strong> – Verstehe das Problem, bevor du antwortest</li>
+                <li><strong>Reproduziere</strong> – Versuche das Problem nachzustellen</li>
+                <li><strong>Nutze das Debug-Log</strong> – Es zeigt dir die Wahrheit</li>
+                <li><strong>Prüfe die Basics</strong> – Berechtigung, Skill aktiv, URL korrekt?</li>
+                <li><strong>Erkläre verständlich</strong> – Vermeide Technik-Jargon mit Nutzern</li>
+                <li><strong>Dokumentiere</strong> – Schreibe auf, was du herausgefunden hast</li>
+                <li><strong>Eskaliere rechtzeitig</strong> – Lieber einmal zu früh als zu spät</li>
+                <li><strong>Sammle Feedback</strong> – Jede Anfrage ist eine Lern-Chance</li>
+                <li><strong>Bleib freundlich</strong> – Auch wenn der Nutzer frustriert ist</li>
+                <li><strong>Lerne kontinuierlich</strong> – Die Plattform entwickelt sich weiter</li>
+            </ol>
+        </div>
+
+        <div class="info-box tip">
+            <div class="info-box-title">💡 Abschlusswort</div>
+            <p>Du musst nicht alles perfekt wissen. Die besten Support-Mitarbeiter zeichnen sich durch <strong>Neugier, Geduld und Lernbereitschaft</strong> aus. Du hast jetzt die Grundlage – den Rest lernst du mit jeder Support-Anfrage dazu. Viel Erfolg!</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn prev" onclick="prevSection()">← Zurück zum Anfang</button>
+            <span></span>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    // Section management
+    const sections = [
+        'welcome', 'overview',
+        'day1-intro', 'day1-llm', 'day1-rag', 'day1-exercise',
+        'day2-admin', 'day2-bots', 'day2-config', 'day2-exercise',
+        'day3-skills', 'day3-types', 'day3-rag-praxis', 'day3-exercise',
+        'day4-advanced', 'day4-insights', 'day4-embed', 'day4-exercise',
+        'day5-support', 'day5-debug', 'day5-troubleshoot', 'day5-exercise', 'day5-final'
+    ];
+
+    let currentSection = 0;
+    let visitedSections = new Set([0]);
+
+    function navigateTo(sectionId) {
+        const index = sections.indexOf(sectionId);
+        if (index !== -1) {
+            showSection(index);
+        }
+    }
+
+    function showSection(index) {
+        if (index < 0 || index >= sections.length) return;
+
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+
+        // Show target section
+        const targetId = 'section-' + sections[index];
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) {
+            targetEl.classList.add('active');
+        }
+
+        // Update nav items
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        const navItems = document.querySelectorAll('.nav-item');
+        if (navItems[index]) {
+            navItems[index].classList.add('active');
+        }
+
+        currentSection = index;
+        visitedSections.add(index);
+        updateProgress();
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Close mobile sidebar
+        document.getElementById('sidebar').classList.remove('open');
+
+        // Save state
+        try {
+            localStorage.setItem('reflact-training-section', index.toString());
+            localStorage.setItem('reflact-training-visited', JSON.stringify([...visitedSections]));
+        } catch(e) {}
+    }
+
+    function nextSection() {
+        showSection(currentSection + 1);
+    }
+
+    function prevSection() {
+        showSection(currentSection - 1);
+    }
+
+    function updateProgress() {
+        const total = sections.length;
+        const visited = visitedSections.size;
+        const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+        const checked = [...checkboxes].filter(cb => cb.checked).length;
+        const totalCheckboxes = checkboxes.length;
+
+        const percentage = Math.round(((visited - 1 + (checked / Math.max(totalCheckboxes, 1))) / total) * 100);
+
+        const fill = document.getElementById('progressFill');
+        const text = document.getElementById('progressText');
+        if (fill) fill.style.width = Math.min(percentage, 100) + '%';
+        if (text) text.textContent = `${visited} / ${total} Abschnitte`;
+
+        // Save checkbox state
+        try {
+            const checkStates = [...checkboxes].map(cb => cb.checked);
+            localStorage.setItem('reflact-training-checks', JSON.stringify(checkStates));
+        } catch(e) {}
+    }
+
+    // Nav item click handlers
+    document.querySelectorAll('.nav-item').forEach((item, index) => {
+        item.addEventListener('click', () => showSection(index));
+    });
+
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // Accordion
+    function toggleAccordion(header) {
+        const body = header.nextElementSibling;
+        const isOpen = body.classList.contains('open');
+
+        // Close all in same parent
+        const parent = header.closest('.section');
+        if (parent) {
+            parent.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+            parent.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('open'));
+        }
+
+        if (!isOpen) {
+            body.classList.add('open');
+            header.classList.add('open');
+        }
+    }
+
+    // Quiz system
+    function selectQuizOption(el) {
+        const quiz = el.closest('.quiz');
+        quiz.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.classList.remove('selected', 'correct', 'wrong');
+        });
+        el.classList.add('selected');
+    }
+
+    function checkQuiz(quizId) {
+        const quiz = document.getElementById(quizId);
+        const selected = quiz.querySelector('.quiz-option.selected');
+        const feedback = document.getElementById(quizId + '-feedback');
+
+        if (!selected) {
+            feedback.textContent = 'Bitte wähle eine Antwort aus.';
+            feedback.className = 'quiz-feedback show wrong';
+            return;
+        }
+
+        const isCorrect = selected.hasAttribute('data-correct');
+
+        quiz.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.classList.remove('selected');
+            if (opt.hasAttribute('data-correct')) {
+                opt.classList.add('correct');
+            } else if (opt === selected && !isCorrect) {
+                opt.classList.add('wrong');
+            }
+        });
+
+        if (isCorrect) {
+            feedback.textContent = '✅ Richtig! Gut gemacht.';
+            feedback.className = 'quiz-feedback show correct';
+        } else {
+            feedback.textContent = '❌ Leider falsch. Die richtige Antwort ist grün markiert.';
+            feedback.className = 'quiz-feedback show wrong';
+        }
+    }
+
+    // Restore state from localStorage
+    function restoreState() {
+        try {
+            const savedSection = localStorage.getItem('reflact-training-section');
+            const savedVisited = localStorage.getItem('reflact-training-visited');
+            const savedChecks = localStorage.getItem('reflact-training-checks');
+
+            if (savedVisited) {
+                visitedSections = new Set(JSON.parse(savedVisited));
+            }
+
+            if (savedChecks) {
+                const checkStates = JSON.parse(savedChecks);
+                const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+                checkStates.forEach((state, i) => {
+                    if (checkboxes[i]) checkboxes[i].checked = state;
+                });
+            }
+
+            if (savedSection) {
+                showSection(parseInt(savedSection));
+            } else {
+                updateProgress();
+            }
+        } catch(e) {
+            updateProgress();
+        }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && e.altKey) nextSection();
+        if (e.key === 'ArrowLeft' && e.altKey) prevSection();
+    });
+
+    // Initialize
+    restoreState();
+</script>
+
+</body>
+</html>
